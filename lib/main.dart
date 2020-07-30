@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:tocep/screens/home.dart';
+import 'package:tocep/screens/widgets/home.dart';
 
 void main() {
   runApp(

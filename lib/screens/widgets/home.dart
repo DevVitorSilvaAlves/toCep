@@ -1,5 +1,6 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:tocep/controller/api.dart';
+import 'package:http/http.dart' as http;
 import 'package:tocep/screens/widgets/card.dart';
 
 class Home extends StatefulWidget {
@@ -8,33 +9,44 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+  String cep;
+  String resultJsonUf = '';
+  String resultJsonRua = '';
+  String resultJsonBairro = '';
+  String resultJsonLocalidade = '';
+  String resultJsonComplemento = '';
   TextEditingController textField = TextEditingController();
-  var instanceApi = Api();
-  var _textContainer = '';
-  var _resultJsonUf = '';
-  var _resultJsonRua = '';
-  var _resultJsonBairro = '';
-  var _resultJsonLocalidade = '';
-  var _resultJsonComplemento = '';
 
-  setStateResponseApi() {
-    var getTextField = textField.text.toString();
-    var getResultApi = instanceApi.createConnection(getTextField);
-    setState(() {
-      _resultJsonUf = getResultApi['uf'].toString();
-      _resultJsonRua = getResultApi['logradouro'].toString();
-      _resultJsonBairro = getResultApi['bairro'].toString();
-      _resultJsonLocalidade = getResultApi['localidade'].toString();
-      _resultJsonComplemento = getResultApi['complemento'].toString();
-    });
+  getTextInputField() {
+    String cepRequested = textField.text;
+    makeRequestApi(cepRequested);
+  }
+
+  makeRequestApi(cepRequested) async {
+    String url = 'https://viacep.com.br/ws/${cepRequested}/json/';
+    http.Response response = await http.get(url);
+    decodesJsonToMap(response);
+  }
+
+  decodesJsonToMap(response) {
+    Map<dynamic, dynamic> responseJson = json.decode(response.body);
+    showResponseApi(responseJson);
+  }
+
+  void showResponseApi(responseJson) {
+    resultJsonUf = responseJson['uf'];
+    resultJsonRua = responseJson['logradouro'];
+    resultJsonBairro = responseJson['bairro'];
+    resultJsonLocalidade = responseJson['localidade'];
+    resultJsonComplemento = responseJson['complemento'];
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       //
-      body: SingleChildScrollView(
-        child: SafeArea(
+      body: SafeArea(
+        child: SingleChildScrollView(
           child: Container(
             padding: EdgeInsets.all(15),
             child: Column(
@@ -46,14 +58,13 @@ class _HomeState extends State<Home> {
                     border: OutlineInputBorder(),
                   ),
                 ),
-                CardListTile('UF: ', _resultJsonUf),
-                CardListTile('Rua: ', _resultJsonRua),
-                CardListTile('Bairro: ', _resultJsonBairro),
-                CardListTile('Localidade: ', _resultJsonLocalidade),
-                CardListTile('Complemento: ', _resultJsonComplemento),
-                Text(
-                  _resultJsonBairro,
-                  style: TextStyle(color: Colors.black),
+                Wrap(
+                  children: <Widget>[
+                    CardListTile('Rua: ', resultJsonRua),
+                    CardListTile('Bairro: ', resultJsonBairro),
+                    CardListTile('Localidade: ', resultJsonLocalidade),
+                    CardListTile('Complemento: ', resultJsonComplemento),
+                  ],
                 ),
               ],
             ),
@@ -63,7 +74,7 @@ class _HomeState extends State<Home> {
       //
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       floatingActionButton: FloatingActionButton(
-        onPressed: setStateResponseApi,
+        onPressed: getTextInputField,
         child: Icon(
           Icons.search,
           size: 28,
