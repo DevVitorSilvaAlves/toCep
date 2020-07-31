@@ -40,6 +40,9 @@ class _HomeState extends State<Home> {
         responseJson[item] = 'Não encontrado';
       }
     });
+    if (responseJson['error'] == true) {
+      responseJson['error'] = "CEP Não encontrado";
+    }
     showResponseApi(responseJson);
   }
 
