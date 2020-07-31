@@ -34,7 +34,6 @@ class _HomeState extends State<Home> {
       'bairro',
       'localidade',
       'complemento',
-      'erro',
     ];
     listForValidation.forEach((item) {
       if (responseJson[item].isEmpty) {
@@ -52,6 +51,10 @@ class _HomeState extends State<Home> {
       resultJsonLocalidade = responseJson['localidade'];
       resultJsonComplemento = responseJson['complemento'];
     });
+  }
+
+  void pushFavoritePage() {
+    Navigator.pop(context, MaterialPageRoute(builder: (context) => Card()));
   }
 
   @override
@@ -121,9 +124,12 @@ class _HomeState extends State<Home> {
             children: <Widget>[
               Padding(
                 padding: EdgeInsets.all(10),
-                child: Icon(
-                  Icons.favorite,
-                  color: Colors.white,
+                child: GestureDetector(
+                  onTap: pushFavoritePage,
+                  child: Icon(
+                    Icons.favorite,
+                    color: Colors.white,
+                  ),
                 ),
               ),
               Padding(
