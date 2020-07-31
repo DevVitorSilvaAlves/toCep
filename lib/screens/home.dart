@@ -33,7 +33,8 @@ class _HomeState extends State<Home> {
       'logradouro',
       'bairro',
       'localidade',
-      'complemento'
+      'complemento',
+      'erro',
     ];
     listForValidation.forEach((item) {
       if (responseJson[item].isEmpty) {
