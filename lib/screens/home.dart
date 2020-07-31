@@ -15,7 +15,7 @@ class _HomeState extends State<Home> {
   String resultJsonBairro = '';
   String resultJsonLocalidade = '';
   String resultJsonComplemento = '';
-  var suffixIconFavorite = Icon(Icons.favorite_border);
+  var suffixIconFavorite = Icons.favorite_border;
 
   TextEditingController textField = TextEditingController();
 
@@ -73,17 +73,15 @@ class _HomeState extends State<Home> {
                     ),
                     border: OutlineInputBorder(),
                     suffixIcon: IconButton(
-                        icon: suffixIconFavorite,
+                        icon: Icon(suffixIconFavorite),
                         onPressed: () {
-                          if (suffixIconFavorite ==
-                              Icon(Icons.favorite_border)) {
+                          if (suffixIconFavorite == Icons.favorite_border) {
                             setState(() {
-                              suffixIconFavorite = Icon(Icons.favorite);
+                              suffixIconFavorite = Icons.favorite;
                             });
-                          } else if (suffixIconFavorite ==
-                              Icon(Icons.favorite)) {
+                          } else if (suffixIconFavorite == Icons.favorite) {
                             setState(() {
-                              suffixIconFavorite = Icon(Icons.favorite_border);
+                              suffixIconFavorite = Icons.favorite_border;
                             });
                           }
                         }),
