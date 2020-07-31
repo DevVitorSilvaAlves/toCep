@@ -1,8 +1,9 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:path_provider/path_provider.dart';
 import 'package:tocep/widgets/card.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class Home extends StatefulWidget {
   @override
@@ -53,8 +54,53 @@ class _HomeState extends State<Home> {
     });
   }
 
+  changeFavoriteIcon() {
+    if (suffixIconFavorite == Icons.favorite_border) {
+      setState(() {
+        suffixIconFavorite = Icons.favorite;
+      });
+    } else if (suffixIconFavorite == Icons.favorite) {
+      setState(() {
+        suffixIconFavorite = Icons.favorite_border;
+      });
+    }
+    addFavoriteCep();
+  }
+
+  Future<File> getFile() async {
+    final path = await getApplicationDocumentsDirectory();
+    return File('$path/favorites.json');
+  }
+
+  addFavoriteCep() async {
+    var favoriteCep = textField.text.toString();
+    String data = json.encode(favoriteCep);
+    var file = await getFile();
+    file.writeAsString(favoriteCep);
+  }
+
+  readFavoriteCep() async {
+    try {
+      final file = await getFile();
+      return file.readAsString;
+    } catch (error) {
+      return null;
+    }
+  }
+
   void pushFavoritePage() {
-    Navigator.pop(context, MaterialPageRoute(builder: (context) => Card()));
+    Navigator.push(context, MaterialPageRoute(builder: (context) => Card()));
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    readFavoriteCep().then((data) {
+      List listFavorites = json.decode(data);
+      setState(() {
+        resultJsonUf = listFavorites.toString();
+      });
+    });
   }
 
   @override
@@ -77,18 +123,9 @@ class _HomeState extends State<Home> {
                     ),
                     border: OutlineInputBorder(),
                     suffixIcon: IconButton(
-                        icon: Icon(suffixIconFavorite),
-                        onPressed: () {
-                          if (suffixIconFavorite == Icons.favorite_border) {
-                            setState(() {
-                              suffixIconFavorite = Icons.favorite;
-                            });
-                          } else if (suffixIconFavorite == Icons.favorite) {
-                            setState(() {
-                              suffixIconFavorite = Icons.favorite_border;
-                            });
-                          }
-                        }),
+                      icon: Icon(suffixIconFavorite),
+                      onPressed: changeFavoriteIcon,
+                    ),
                   ),
                   maxLength: 8,
                   maxLengthEnforced: true,

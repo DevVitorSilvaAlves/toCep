@@ -13,6 +13,9 @@ class _FavoriteState extends State<Favorite> {
         backgroundColor: Colors.blue,
         title: Text('Favoritos'),
       ),
+      body: Container(
+        color: Colors.white,
+      ),
     );
   }
 }
