@@ -80,7 +80,8 @@ class _HomeState extends State<Home> {
                             setState(() {
                               suffixIconFavorite = Icon(Icons.favorite);
                             });
-                          } else {
+                          } else if (suffixIconFavorite ==
+                              Icon(Icons.favorite)) {
                             setState(() {
                               suffixIconFavorite = Icon(Icons.favorite_border);
                             });
