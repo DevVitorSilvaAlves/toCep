@@ -1,8 +1,10 @@
+import 'dart:io';
 import 'dart:convert';
+import 'favorite.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:tocep/widgets/card.dart';
-import 'favorite.dart';
+import 'package:path_provider/path_provider.dart';
 
 class Home extends StatefulWidget {
   @override
@@ -16,8 +18,8 @@ class _HomeState extends State<Home> {
   String resultJsonLocalidade = '';
   String resultJsonComplemento = '';
   var suffixIconFavorite = Icons.favorite_border;
-
   TextEditingController textField = TextEditingController();
+  List favorites = new List();
 
   makeRequestApi() async {
     String cepRequested = textField.text.toString();
@@ -63,11 +65,54 @@ class _HomeState extends State<Home> {
         suffixIconFavorite = Icons.favorite_border;
       });
     }
+    addFavorite();
+  }
+
+  Future<File> getFile() async {
+    final _directory = await getApplicationDocumentsDirectory();
+    return File('${_directory.path}/datafavorites.json');
+  }
+
+  Future<File> saveFile() async {
+    final _file = await getFile();
+    String dataJson = json.encode(favorites);
+    return _file.writeAsString(dataJson);
+  }
+
+  Future<String> readFile() async {
+    try {
+      final _file = await getFile();
+      return _file.readAsString();
+    } catch (error) {
+      return null;
+    }
+  }
+
+  void addFavorite() {
+    setState(() {
+      Map<String, dynamic> data = Map();
+      data['title'] = textField.text;
+      data['state'] = true;
+      favorites.add(data);
+      saveFile();
+    });
   }
 
   pushFavoritePage() {
     Navigator.push(
         context, MaterialPageRoute(builder: (context) => Favorite()));
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    readFile().then(
+      (data) {
+        setState(() {
+          favorites = json.decode(data);
+        });
+      },
+    );
   }
 
   @override
@@ -90,7 +135,10 @@ class _HomeState extends State<Home> {
                     ),
                     border: OutlineInputBorder(),
                     suffixIcon: IconButton(
-                      icon: Icon(suffixIconFavorite),
+                      icon: Icon(
+                        suffixIconFavorite,
+                        color: Colors.red,
+                      ),
                       onPressed: changeFavoriteIcon,
                     ),
                   ),
