@@ -21,7 +21,7 @@ A minimalist Zip Code(''CEP'' in Brazil) consultant developed in Flutter.
 # Scheduled tabs
 
 - [X] Home
-- [ ] Favorites Tab
+- [X] Favorites Tab
 - [ ] Settings Tab
 
 # License
